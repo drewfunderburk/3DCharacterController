@@ -136,14 +136,17 @@ public class CharacterController3D : MonoBehaviour
     private void Movement(float horizontal, float vertical)
     {
         // Create a new Vector3 to store forward and sideways movement
-        Vector3 movement = new Vector3(horizontal * _acceleration, _rigidbody.velocity.y, vertical * _acceleration);
+        Vector3 movementX = transform.right * horizontal * _acceleration;
+        Vector3 movementY = transform.forward * vertical * _acceleration;
+        Vector3 movement = movementX + movementY;
+        movement.y = _rigidbody.velocity.y;
 
         // Apply air movement scale if player is airborn
         if (!_isGrounded)
             movement *= _airMovementScale;
 
         // Add force to rigidbody
-        _rigidbody.AddForce(movement * Time.deltaTime, ForceMode.Acceleration);
+        _rigidbody.MovePosition(transform.position + (movement * Time.deltaTime));
 
         // Store the x and z movement of the rigidbody
         Vector2 velocity2D = new Vector2(_rigidbody.velocity.x, _rigidbody.velocity.z);
@@ -210,6 +213,7 @@ public class CharacterController3D : MonoBehaviour
 [CustomEditor(typeof(CharacterController3D))]
 public class CharacterController3DEditor : Editor
 {
+    bool showText = true;
     public override void OnInspectorGUI()
     {
         // Display help text
@@ -218,7 +222,13 @@ This 3D Character Controller uses a Rigidbody and the physics system to move abo
 
 Reasonable default values have been given for most field under default physics settings to give you an idea of where you should expect them to be.
 ";
-        EditorGUILayout.HelpBox(helpText, MessageType.Info);
+
+        showText = EditorGUILayout.BeginFoldoutHeaderGroup(showText, "Info");
+
+        if (showText)
+            EditorGUILayout.HelpBox(helpText, MessageType.Info);
+
+        EditorGUILayout.EndFoldoutHeaderGroup();
 
         // Display base inspector gui
         base.OnInspectorGUI();
