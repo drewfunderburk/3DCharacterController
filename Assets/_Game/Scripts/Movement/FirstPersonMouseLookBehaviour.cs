@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class FirstPersonMouseLook : MonoBehaviour
+public class FirstPersonMouseLookBehaviour : MonoBehaviour
 {
     [Tooltip("Reference the player here. This will allow the script to rotate the player left and right.")]
     [SerializeField] private Transform _player;
@@ -16,6 +16,8 @@ public class FirstPersonMouseLook : MonoBehaviour
     [SerializeField] private float _minimumVerticalAngle = -90;
 
     private float _xRotation = 0;
+
+    public bool HasPlayerReference() { return _player; }
 
     void Start()
     {
@@ -44,17 +46,21 @@ public class FirstPersonMouseLook : MonoBehaviour
     }
 }
 
-[CustomEditor(typeof(FirstPersonMouseLook))]
-class FirstPersonMouseLookEditor : Editor
+[CustomEditor(typeof(FirstPersonMouseLookBehaviour))]
+class FirstPersonMouseLookBehaviourEditor : Editor
 {
-    bool showText = true;
+    private bool showText = true;
 
     public override void OnInspectorGUI()
     {
-        // Display help text
+        // Get reference to script
+        FirstPersonMouseLookBehaviour script = target as FirstPersonMouseLookBehaviour;
+
+        // Declare help text
         string helpText = "Place this script on the main camera, then child the camera to the player in a first person position.";
         string warnText = "This script will capture the cursor into the game view upon entering play mode and clicking the window. To get it back, press ESC.";
 
+        // Display help text
         showText = EditorGUILayout.BeginFoldoutHeaderGroup(showText, "Info");
         if (showText)
         {
@@ -63,6 +69,10 @@ class FirstPersonMouseLookEditor : Editor
         }
 
         EditorGUILayout.EndFoldoutHeaderGroup();
+
+        // Show no player reference warning
+        if (!script.HasPlayerReference())
+            EditorGUILayout.HelpBox("Script needs a reference to the player!", MessageType.Warning);
 
         // Display base inspector gui
         base.OnInspectorGUI();

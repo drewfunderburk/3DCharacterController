@@ -5,9 +5,8 @@ using UnityEditor;
 
 [RequireComponent(typeof(Rigidbody))]
 [DisallowMultipleComponent]
-public class CharacterController3D : MonoBehaviour
+public class CharacterController3DBehaviour : MonoBehaviour
 {
-    #region Serialized Fields
     [Tooltip("The name of the input axis used for horizontal movement. Horizontal by default")]
     [SerializeField] private string _horizontalAxisName = "Horizontal";
     [Tooltip("The name of the input axis used for vertical movement. Vertical by default")]
@@ -54,7 +53,6 @@ public class CharacterController3D : MonoBehaviour
 
     [Tooltip("What layers are considered ground. If this is not set properly, the character will always think it is airborn.")]
     [SerializeField] private LayerMask _whatIsGround = ~0;
-    #endregion
 
     private Rigidbody _rigidbody;
     private float _targetSpeed;     // This speed is used for calculations, _baseMoveSpeed is used as a reference to return this one to
@@ -210,21 +208,20 @@ public class CharacterController3D : MonoBehaviour
     }
 }
 
-[CustomEditor(typeof(CharacterController3D))]
-public class CharacterController3DEditor : Editor
+[CustomEditor(typeof(CharacterController3DBehaviour))]
+public class CharacterController3DBehaviourEditor : Editor
 {
-    bool showText = true;
+    private bool showText = true;
+
     public override void OnInspectorGUI()
     {
+        // Declare help text
+        string helpText = @"This 3D Character Controller uses a Rigidbody and the physics system to move about. As such, it will require a Rigidbody component to function properly. 
+
+Reasonable default values have been given for most field under default physics settings to give you an idea of where you should expect them to be.";
+
         // Display help text
-        string helpText = @"
-This 3D Character Controller uses a Rigidbody and the physics system to move about. As such, it will require a Rigidbody component to function properly. 
-
-Reasonable default values have been given for most field under default physics settings to give you an idea of where you should expect them to be.
-";
-
         showText = EditorGUILayout.BeginFoldoutHeaderGroup(showText, "Info");
-
         if (showText)
             EditorGUILayout.HelpBox(helpText, MessageType.Info);
 
